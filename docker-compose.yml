@@ -28,6 +28,8 @@ services:
       - ./configs/alertmanager/alertmanager.yml:/config/alertmanager.yml
     command:
       - "--config.file=/config/alertmanager.yml"
+    environment:
+      - TZ=Asia/Ho_Chi_Minh # Set your desired timezone here
     ports:
       - 9093:9093
     restart: always
