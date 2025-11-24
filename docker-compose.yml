@@ -1,47 +1,42 @@
+# docker-compose.yml
 services:
-# alertmanager
-  alertmanager:
-    image: prom/alertmanager:${ALERTMANAGER_VERSION:-latest}
-    container_name: alertmanager
-    command:
-      - '--config.file=/etc/alertmanager/config.yml'
-      - '--log.level=error'
-      - '--storage.path=/alertmanager'
-      - '--web.external-url=http://localhost:9093'
-    volumes:
-      - ./configs/alertmanager/alertmanager.yml:/etc/alertmanager/config.yml
-    ports:
-      - 9093:9093
-# vmalert
+   # vmalert executes alerting and recording rules according to the given rule type.
   vmalert:
-    image: victoriametrics/vmalert:${VMALERT_VERSION:-latest}
-    container_name: vmalert
-    restart: always
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8880/health"]
-      interval: 5s
-      timeout: 3s
-      retries: 3
+    image: victoriametrics/vmalert:v1.129.1
     depends_on:
-      - alertmanager
+      - "vmauth"
+      - "alertmanager"
+      - "victoriametrics"
     ports:
       - 8880:8880
     volumes:
-      - ./configs/rules/alerts-vlogs.yml:/etc/alerts/alerts-vlogs.yml:ro
+      - ./rules/alerts-vlogs.yml:/etc/alerts/vlogs.yml
+      - ./rules/alerts-health.yml:/etc/alerts/alerts-health.yml
+      # vlogs rule
+      - ./vlogs-example-alerts.yml:/etc/alerts/vlogs-example-alerts.yml
     command:
-      # alerts state is restored from VictoriaMetrics on restarts
-      - "--remoteRead.url=http://vmauth:8427/select/0/prometheus" 
-      - "--remoteRead.basicAuth.username=${VMAUTH_USERNAME:-admin}"
-      - "--remoteRead.basicAuth.password=${VMAUTH_PASSWORD:-changeme}"
-      - "--remoteWrite.url=http://vmauth:8427/insert/0/prometheus"
-      - "--remoteWrite.basicAuth.username=${VMAUTH_USERNAME:-admin}"
-      - "--remoteWrite.basicAuth.password=${VMAUTH_PASSWORD:-changeme}"
+      - "--datasource.url=http://victoriametrics:8428/" # Read the metrics
+      - "--remoteRead.url=http://victoriametrics:8428/" # Read the alerts saved
+      - "--remoteWrite.url=http://victoriametrics:8428/" # Write the alerts state
       - "--notifier.url=http://alertmanager:9093/"
       - "--rule=/etc/alerts/*.yml"
-      - "--httpListenAddr=:8880"
-      - "--evaluationInterval=15s"
-      - "--loggerFormat=json"
-      - "--loggerLevel=INFO"
-      - "--memory.allowedPercent=80"
-    environment:
-      GOMAXPROCS: 1
+    restart: always
+  # alertmanager receives alerting notifications from vmalert
+  # and distributes them according to --config.file.
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    volumes:
+      - ./alertmanager.yml:/config/alertmanager.yml
+    command:
+      - "--config.file=/config/alertmanager.yml"
+    ports:
+      - 9093:9093
+    restart: always
+  # Telegram webhook 
+  telegram-webhook:
+    build:
+      context: ./telegram-webhook
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
