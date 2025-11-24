@@ -11,7 +11,7 @@ git clone https://github.com/congto/victoria-logs-alert-telgram.git
 cd victoria-logs-alert-telgram/
 ```
 
-Sửa file 
+Sửa file `.env` để thay thế các tham số cần thiết như: tele, slack
 
 
 Chạy container 
