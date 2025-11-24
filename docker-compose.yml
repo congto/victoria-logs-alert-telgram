@@ -2,7 +2,7 @@
 services:
    # vmalert executes alerting and recording rules according to the given rule type.
   vmalert:
-    image: victoriametrics/vmalert:v1.129.1
+    image: victoriametrics/vmalert:${VMALERT_VERSION:-latest}
     depends_on:
       # - "vmauth"
       - "alertmanager"
