@@ -14,7 +14,7 @@ services:
       # vlogs rule
       - ./rules/vlogs-example-alerts.yml:/etc/alerts/vlogs-example-alerts.yml
     command:
-      - "--datasource.url=http://${IP_DATASOURCE:-127.0.0.1}:9428/" # Read the logs 
+      - "--datasource.url=http://${IP_VICLOGS:-127.0.0.1}:9428/" # Read the logs 
       - "--remoteRead.url=http://${IP_VICMETRICS:-127.0.0.1}:8428/" # Read the alerts saved
       - "--remoteWrite.url=http://${IP_VICMETRICS:-127.0.0.1}:8428/" # Write the alerts state
       - "--notifier.url=http://${IP_ALERTMANAGER:-127.0.0.1}:9093/" # URL cua alertmanager 
