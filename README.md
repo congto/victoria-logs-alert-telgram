@@ -34,5 +34,5 @@ Test cảnh báo của alertmanager
 ```
 curl -X POST http://localhost:9093/api/v2/alerts -H 'Content-Type: application/json' -d '[{"labels":{"alertname":"TEST"}}]'
 
-curl -X POST http://172.16.91.30:9093/api/v2/alerts -H 'Content-Type: application/json' -d '[{"labels":{"alertname":"TEST"}}]'
+curl -X POST http://172.16.91.30:9093/api/v2/alerts -H 'Content-Type: application/json' -d '[{"labels":{"alertname":"TEST1111"}}]'
 ```
