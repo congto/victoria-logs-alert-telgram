@@ -4,10 +4,11 @@ services:
   vmalert:
     image: victoriametrics/vmalert:${VMALERT_VERSION:-latest}
     depends_on:
-      # - "vmauth"
       - "alertmanager"
     ports:
       - 8880:8880
+    environment:
+      - TZ=Asia/Ho_Chi_Minh # Set your desired timezone here
     volumes:
       # - ./rules/alerts-vlogs.yml:/etc/alerts/vlogs.yml
       # - ./rules/alerts-health.yml:/etc/alerts/alerts-health.yml

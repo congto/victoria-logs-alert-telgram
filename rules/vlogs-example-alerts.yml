@@ -5,11 +5,17 @@ groups:
     rules:
       - alert: AlwaysFiring
         expr: '* | stats count()'
+        labels:
+          severity: critical
         annotations:
           description: "Generated more than {{$value}} log entries in the last 1 minute"
       - alert: TooManyLogs
-        expr: '* | stats by (path) count() as total | filter total:>50'
+        expr: '* | stats by (host,source_ip) count() as total | filter total:>50'
+        labels:
+          severity: critical
         annotations:
+          summary: "Canh bao tu {{$labels.source_ip}}"
           description: "Path {{$labels.path}} generated more than 50 log entries in the last 1 minute: {{$value}}"
+          #query: '_time:3m * "congto"' # the exact same query as `expr` but without `stats`          
       - record: path:logs:count
         expr: '* | stats by (path) count()'

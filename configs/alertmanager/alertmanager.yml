@@ -19,19 +19,15 @@ receivers:
 - name: 'tranque-slack-hook'
   # telegram
   slack_configs:
-  - api_url: "${SLACK_API_URL}"
-  #- api_url: "https://hooks.slack.com/services/T02QZ38QK/B0JL8KSJE/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  - api_url: "https://hooks.slack.com/services/T02QZ38QK/B0JL8KSJE/xxxxxxxxxxxxxxxxx"
     channel: '#ctocanhbao'
     send_resolved: true
-    title: "{{ .CommonAnnotations.summary }}"
-    title_link: ""
-    text: "RabbitMQ server got down for 10 seconds"
-  # telegram
-  # telegram_configs:
-    # - chat_id: -yyyyyyyyyyyyyy
-      # bot_token: 'xxxxxxxxxxxxxxxxxxxxxxxxx'
-      # send_resolved: true
-  webhook_configs:
-  - url: 'http://telegram-webhook:8080/alert'
-  # - url: 'http://172.16.91.30:8080/alert'
-    send_resolved: true
+    title: "{{ .CommonLabels.alertname }} - {{ .Status }}"
+    text: |
+      {{ range .Alerts }}
+        *Alert:* {{ .Annotations.summary }}
+        *IP:* {{ .Labels.source_ip }}
+        *Description:* {{ .Annotations.description }}
+        *Severity:* {{ .Labels.severity }}
+        *Source:* {{ .GeneratorURL }}
+      {{ end }}
