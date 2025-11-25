@@ -1,0 +1,22 @@
+# /root/vmalert/rules/vlogs-alerts-ssh-ok.yml
+groups:
+  - name: log-rules
+    type: vlogs
+    interval: 30s
+    rules:
+      - alert: LogSshAuthenOk
+        expr: '* | "Accepted password for root" | stats by (host,source_ip) count() as ssh_ok_num | filter ssh_ok_num:>0'
+        labels:
+          severity: Warning
+        annotations:
+          description: "Co {{ .Value }} log SSH thanh cong trong vong 1 phut"
+      # - alert: TooManyLogs
+        # expr: '* | stats by (host,source_ip) count() as total | filter total:>50'
+        # labels:
+          # severity: critical
+        # annotations:
+          # summary: "Canh bao tu {{$labels.source_ip}}"
+          # description: "Path {{$labels.path}} generated more than 50 log entries in the last 1 minute: {{$value}}"
+          # #query: '_time:3m * "congto"' # the exact same query as `expr` but without `stats`          
+      - record: path:logs:count
+        expr: '* | Accepted password for root |stats by (host) count()'
