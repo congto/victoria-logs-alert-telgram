@@ -13,7 +13,7 @@ services:
       # - ./rules/alerts-vlogs.yml:/etc/alerts/vlogs.yml
       # - ./rules/alerts-health.yml:/etc/alerts/alerts-health.yml
       # vlogs rule
-      - ./rules/vlogs-example-alerts.yml:/etc/alerts/vlogs-example-alerts.yml
+      - ./rules:/etc/alerts
     command:
       - "--datasource.url=http://${IP_VICLOGS:-127.0.0.1}:9428/" # Read the logs 
       - "--remoteRead.url=http://${IP_VICMETRICS:-127.0.0.1}:8428/" # Read the alerts saved
@@ -24,7 +24,7 @@ services:
   # alertmanager receives alerting notifications from vmalert
   # and distributes them according to --config.file.
   alertmanager:
-    image: prom/alertmanager:v0.28.1
+    image: prom/alertmanager:${ALERTMANAGER_VERSION:-latest}
     volumes:
       - ./configs/alertmanager/alertmanager.yml:/config/alertmanager.yml
     command:
