@@ -1,0 +1,23 @@
+# /root/vmalert/rules/vlogs-vcenter-login.yml
+groups:
+  - name: log-rules
+    type: vlogs
+    interval: 1m
+    rules:
+      # Rule canh bao login vcenter thanhcong
+      - alert: LoginVcenterOK
+        expr: '* | vmw_event_type:vim.event.EventEx | Successful | stats by (host,source_ip,vmw_event_name,vmw_event_user) count() as vc_login_ok_num | filter vc_login_ok_num:>0'
+        labels:
+          severity: Warning
+        annotations:
+          description: "User {{$labels.vmw_event_user}} dang nhap thanh cong vao {{$labels.host}}"
+          
+      # Rule canh bao login vcenter that bai
+      - alert: LoginVcenterFailed
+        expr: '* | vmw_event_type:vim.event.EventEx | Failed | stats by (host,source_ip,vmw_event_name,vmw_event_user) count() as vc_login_failed_num | filter vc_login_failed_num:>0'
+        labels:
+          severity: Warning
+        annotations:
+          description: "User {{$labels.vmw_event_user}} dang nhap that bai vao {{$labels.host}}"
+      - record: vcenterlogin:logs:count
+        expr: '* | vmw_event_type:vim.event.EventEx | login |stats by (host) count()'

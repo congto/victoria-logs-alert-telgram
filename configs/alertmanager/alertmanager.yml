@@ -12,14 +12,19 @@ route:
   - match:
       # alert name defined in alerting_rules.yml
       alertname: rabbitmqDown
-  receiver: 'tranque-slack-hook'
+  receiver: 'ten-canh-bao'
 
 receivers:
-# slack hook configuration
-- name: 'tranque-slack-hook'
-  # telegram
+- name: 'ten-canh-bao'
+  # Canh bao qua telegram
+  telegram_configs:
+  - chat_id: -252953753
+    bot_token: '6383279569:AAEmkrHFwcrC3x4g8ndHyPm3E_IDVDq7XXg'
+    send_resolved: true
+
+  # Canh bao toi slsack
   slack_configs:
-  - api_url: "https://hooks.slack.com/services/T02QZ38QK/B0JL8KSJE/xxxxxxxxxxxxxxxxx"
+  - api_url: "https://hooks.slack.com/services/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"
     channel: '#ctocanhbao'
     send_resolved: true
     title: "{{ .CommonLabels.alertname }} - {{ .Status }}"
