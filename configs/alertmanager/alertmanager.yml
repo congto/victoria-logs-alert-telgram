@@ -1,30 +1,23 @@
+# /root/vmalert/configs/alertmanager/alertmanager.yml
 global:
   resolve_timeout: 1m
-
 route:
-  group_by: ['instance', 'severity']
-  # wait to send notification
+  receiver: 'telegram-notifications'
   group_wait: 1s
-  group_interval: 2m
-  # wait to resend notification
+  group_interval: 1m
   repeat_interval: 5m
-  routes:
-  - match:
-      # alert name defined in alerting_rules.yml
-      alertname: rabbitmqDown
-  receiver: 'ten-canh-bao'
 
 receivers:
-- name: 'ten-canh-bao'
+- name: 'telegram-notifications'
   # Canh bao qua telegram
   telegram_configs:
   - chat_id: -252953753
-    bot_token: '6383279569:AAEmkrHFwcrC3x4gxxxxxxxxxxxxxx'
+    bot_token: '6383279569:AAEmkrHFwcrC3x4g8ndHyPmdddddđ'
     send_resolved: true
 
   # Canh bao toi slsack
   slack_configs:
-  - api_url: "https://hooks.slack.com/services/T02QZ38QK/B0JL8KSJE/xxxxxxxxxxxx"
+  - api_url: "https://hooks.dddddd/services/T02QZ38QK/Bxxxxxxxxxxxxx"
     channel: '#ctocanhbao'
     send_resolved: true
     title: "{{ .CommonLabels.alertname }} - {{ .Status }}"
